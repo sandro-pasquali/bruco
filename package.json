@@ -1,0 +1,24 @@
+{
+  "name": "bruco",
+  "version": "1.0.0",
+  "description": "Find all require'd and imported npm packages in a file or array of files",
+  "main": "index.js",
+  "scripts": {
+    "test": "node test"
+  },
+  "keywords": [
+    "ast",
+    "package",
+    "module"
+  ],
+  "author": "Sandro Pasquali <spasquali@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "acorn": "4.0.3",
+    "ast-types": "0.9.0",
+    "validate-npm-package-name": "2.2.2"
+  },
+  "devDependencies": {
+    "lodash": "4.16.1"
+  }
+}
