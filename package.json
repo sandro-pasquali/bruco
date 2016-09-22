@@ -20,5 +20,16 @@
   },
   "devDependencies": {
     "lodash": "4.16.1"
-  }
+  },
+  "directories": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sandro-pasquali/bruco.git"
+  },
+  "bugs": {
+    "url": "https://github.com/sandro-pasquali/bruco/issues"
+  },
+  "homepage": "https://github.com/sandro-pasquali/bruco#readme"
 }
