@@ -1,6 +1,6 @@
 {
   "name": "bruco",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Find all require'd and imported npm packages in a file or array of files, both .js and .jsx",
   "main": "index.js",
   "scripts": {

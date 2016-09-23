@@ -87,20 +87,33 @@ module.exports = (src, opts={}) => {
         });
 
         types.visit(ast, {
+
+            // NOTE:
+            // When using `import` or `require` w/ subpaths, e.g:
+            //  import map from 'lodash/map'
+            //  const map = require('lodash/map')
+            // Just grab the module name (lose everything after first `/`)
+            //
+            visitImportDeclaration: function(path) {
+
+                let ns = path.node.source;
+
+                if(ns.type === 'Literal') {
+                    // Get just the first segment of the import
+                    //
+                    coll.add(ns.value.split('/')[0]);
+                    getAll && all.add(ns.value);
+                }
+                this.traverse(path);
+            },
+
             visitCallExpression: function(path) {
 
                 let node = path.node;
                 let args = node.arguments;
 
                 if(node.callee.name === 'require' && args.length && args[0].type === 'Literal') {
-
-                    // When using `import` or `require` w/ subpaths, e.g:
-                    //  import map from 'lodash/map'
-                    //  const map = require('lodash/map')
-                    // Just grab the module name
-                    //
                     coll.add(args[0].value.split('/')[0]);
-
                     getAll && all.add(args[0].value);
                 }
 
