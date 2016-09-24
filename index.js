@@ -11,17 +11,13 @@ let glob = require('glob');
 let _ = require('lodash');
 
 // @param src {Mixed}   If an Array, assume array of file paths.
-//                      If a String, check if directory or file path.
-//                      If directory, glob for ALL js, jsx, etc. recursive.
-//                      If a file, convert to Array and process.
+//                      If a String convert to Array.
 // @param [opts] {Object}
 // @param opts.ignore {Array}   Additional ignores should this be a globbing action.
 // @param opts.all {Function}   Sent every require string etc. found.
 //
 module.exports = (src, opts={}) => {
 
-    let stat;
-    let pack;
     let ignore = opts.ignore || [];
     let getAll = opts.all;
     let all = new Set();
@@ -31,35 +27,51 @@ module.exports = (src, opts={}) => {
             throw new Error(`First argument must be String path, or Array of paths. Received: ${src}`);
         }
 
-        stat = fs.statSync(src);
-
-        if(stat.isFile()) {
-            src = [src];
-        }
-
-        if(stat.isDirectory()) {
-            src = glob.sync(path.join(src, `**/*.{js,jsx}`), {
-                ignore: ['**/node_modules/**'].concat(ignore)
-            })
-        }
+        src = [src];
     }
 
     // Get a unique list of all required packages filtering out any that
-    // are not valid (modern) npm package names. Note sort at end.
+    // are not valid (modern) npm package names.
     // @see https://www.npmjs.com/package/validate-npm-package-name
     //
-    pack = _.uniq(src.reduce((acc, f) => {
-        acc = acc.concat([...findIn(f)].filter(m => validate(m).validForNewPackages));
-        return acc;
-    }, []));
+    function fetch(s) {
+        let pack = _.uniq(s.reduce((acc, f) => {
+            acc = acc.concat([...findIn(f)].filter(m => validate(m).validForNewPackages));
+            return acc;
+        }, []));
+
+        return pack;
+    }
+
+    let res = fetch(src);
 
     getAll && getAll([...all]);
 
-    return pack;
+    return res;
 
     function findIn(src) {
 
         let coll = new Set();
+        let stat;
+
+        if(_.isArray(src)) {
+            return new Set(fetch(src));
+        }
+
+        try {
+            stat = fs.statSync(src);
+        } catch(e) {
+            debug('ERROR:', e.message);
+            return coll;
+        }
+
+        // If a directory, find all relevant files and re-call
+        //
+        if(stat.isDirectory()) {
+            return new Set(fetch(glob.sync(path.join(src, `**/*.{js,jsx}`), {
+                ignore: ['**/node_modules/**'].concat(ignore)
+            })));
+        }
 
         if(path.extname(src) === '.jsx') {
             debug("PROCESSING -JSX- FILE:", src);
@@ -99,8 +111,6 @@ module.exports = (src, opts={}) => {
                 let ns = path.node.source;
 
                 if(ns.type === 'Literal') {
-                    // Get just the first segment of the import
-                    //
                     coll.add(ns.value.split('/')[0]);
                     getAll && all.add(ns.value);
                 }

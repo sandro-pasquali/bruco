@@ -1,7 +1,6 @@
 "use strict";
 
 let bruco = require('../../');
-let path = require('path');
 let _ = require('lodash');
 let debug = require('debug')('bruco-test');
 let pack = require('../../package.json');
@@ -13,7 +12,15 @@ module.exports = function(test, Promise) {
     // Find packages in this repo. Note (naive) sort at end.
     //
     return Promise
-    .resolve(bruco(path.resolve('./'), {
+    .resolve(bruco([
+        './index.js',
+        './test/spec',
+        [
+            './test/index.js',
+            './test/sample.js',
+            './test/sample.jsx'
+        ]
+    ], {
         ignore : [
             '**/node_modules/**'
         ],
@@ -40,6 +47,6 @@ module.exports = function(test, Promise) {
             'unass_w_expression',
             'unass_w_function',
             'unassigned'
-        ], 'Correctly finding packages');
+        ], 'Found uninstalled packages');
     });
 };
