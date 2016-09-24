@@ -73,7 +73,7 @@ All options are...optional:
 - `all` [`Function`] : Will receive an `Array` of all `String` literals found within `require` or `import` calls, including the ones that were not included in the final collection. This can be used to build a larger view of package loading across your application, for instance. Things like `../../utils.js` or `$anIllegalNpmPaCkAgEname`.
 
 ```
-let packages = bruco('/path/to/file3.jsx', {
+let packages = bruco('/path/to/dir', {
     ignore : [
         '**/node_modules/**'
     ],
