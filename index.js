@@ -1,14 +1,14 @@
 'use strict';
 
-let fs = require('fs-extra');
-let path = require('path');
-let acorn = require('acorn');
-let types = require('ast-types');
-let babel = require('babel-core');
-let debug = require('debug')('bruco');
-let validate = require('validate-npm-package-name');
-let glob = require('glob');
-let _ = require('lodash');
+const fs = require('fs-extra');
+const path = require('path');
+const acorn = require('acorn');
+const types = require('ast-types');
+const babel = require('babel-core');
+const debug = require('debug')('bruco');
+const validate = require('validate-npm-package-name');
+const glob = require('glob');
+const _ = require('lodash');
 
 // @param src {Mixed}   If an Array, assume array of file paths.
 //                      If a String convert to Array.
